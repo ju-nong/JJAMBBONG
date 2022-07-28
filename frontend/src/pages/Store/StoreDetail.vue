@@ -1,5 +1,5 @@
 <template>
-    <h1>스토어</h1>
+    <h1>스토어 상세 페이지</h1>
 </template>
 
 <script>

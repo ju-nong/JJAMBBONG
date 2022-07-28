@@ -2,44 +2,66 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 import axios from "axios";
 import sign from "@api/sign";
+import router from "@router";
 
 export const useUserStore = defineStore("user", () => {
+    const _type = ref("guest");
     const _id = ref();
     const _password = ref();
     const _name = ref();
     const _cart = ref([]);
 
+    const allPrint = () => {
+        console.log(`type: ${_type.value}`);
+        console.log(`id: ${_id.value}`);
+        console.log(`password: ${_password.value}`);
+        console.log(`name: ${_name.value}`);
+        console.log(`cart: ${_cart.value}`);
+    };
+
     const login = (id, password) => {
-        if (_isNull(id) || _isNull(password)) return;
+        if (_isNull(id) || _isNull(password)) return true;
 
         sign.login(id, password)
-            .then((res) => {
-                const data = res.data;
+            .then(async (res) => {
+                const { status, response, message } = await res.data;
 
-                if (data.status) {
+                if (status) {
+                    const { type, id, password, name, cart } = response;
+
+                    _type.value = type;
                     _id.value = id;
                     _password.value = password;
-                    _name.value = data.response;
-                    alert(`${_name.value}님 안녕하세요!`);
+                    _name.value = name;
+                    _cart.value = cart;
+
+                    alert(`${name}님 안녕하세요!`);
+                    router.push("main");
                 } else {
-                    alert(data.message);
+                    alert(message);
                 }
             })
             .catch((error) => {
                 _exception(error);
             });
-
-        return true;
     };
 
-    const join = (id, password, name) => {
-        if (_isNull(id) || _isNull(password) || _isNull(name)) return;
-        sign.join(id, password, name)
-            .then((res) => {
-                const data = res.data;
+    const join = (type, id, password, name) => {
+        if (
+            _isNull(type) ||
+            _isNull(id) ||
+            _isNull(password) ||
+            _isNull(name)
+        ) {
+            return true;
+        }
+        sign.join(type, id, password, name)
+            .then(async (res) => {
+                const data = await res.data;
 
                 if (data.status) {
                     alert("회원가입 되었습니다.");
+                    router.push("main");
                 } else {
                     alert(data.message);
                 }
@@ -47,10 +69,11 @@ export const useUserStore = defineStore("user", () => {
             .catch((error) => {
                 _exception(error);
             });
-        return true;
     };
 
     const logout = () => {
+        alert("로그아웃 되었습니다.");
+        _type.value = null;
         _id.value = null;
         _password.value = null;
         _name.value = null;
@@ -70,7 +93,17 @@ export const useUserStore = defineStore("user", () => {
     const _isNull = (value) =>
         value == null || value == undefined || value.trim() === "";
 
-    return { _id, _password, _name, _cart, login, join, logout };
+    return {
+        _type,
+        _id,
+        _password,
+        _name,
+        _cart,
+        allPrint,
+        login,
+        join,
+        logout,
+    };
 });
 
 export default useUserStore;

@@ -8,16 +8,6 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
     function (req) {
-        if (!(req.url == "/login" || req.url == "/join")) {
-            const user = useUserStore();
-            const id = user.id;
-            if (!id) {
-                throw new axios.Cancel("로그인을 해주세요.");
-            } else {
-                req.headers.id = id;
-            }
-        }
-
         return req;
     },
     function (error) {

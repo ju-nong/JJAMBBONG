@@ -12,11 +12,12 @@ export default {
             },
         });
     },
-    join(id, password, name) {
+    join(type, id, password, name) {
         return Send({
             url: "/join",
             method: "post",
             data: {
+                type: type,
                 id: id,
                 password: password,
                 name: name,

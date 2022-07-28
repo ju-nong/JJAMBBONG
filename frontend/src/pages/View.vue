@@ -1,5 +1,5 @@
 <template>
-    <h1>상품현황 페이지</h1>
+    <router-view></router-view>
 </template>
 
 <script>

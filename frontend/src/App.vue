@@ -1,6 +1,8 @@
 <template>
-    <div>
-        <input type="text" name="id" placeholder="id" v-model="id" />
+    <div class="wrap">
+        <TheHeader />
+        <router-view></router-view>
+        <!-- <input type="text" name="id" placeholder="id" v-model="id" />
         <input
             type="password"
             name="password"
@@ -15,33 +17,29 @@
         >
             회원가입
         </button>
-        <button v-if="user._id != null" @click="user.logout()">로그아웃</button>
+        <button v-if="user._id != null" @click="user.logout()">로그아웃</button> -->
     </div>
 </template>
 
 <script>
-import { ref } from "vue";
-
-import useUserStore from "@store/user";
+import TheHeader from "@components/TheHeader";
 
 export default {
     name: "App",
-    setup() {
-        const user = useUserStore();
-
-        const id = ref();
-        const password = ref();
-        const name = ref();
-
-        const isEmpty = () => {
-            alert("모두 입력해주세요.");
-        };
-
-        return { id, password, name, user, isEmpty };
-    },
+    components: { TheHeader },
+    setup() {},
 };
 </script>
 
-<script setup></script>
-
-<style></style>
+<style lang="scss">
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    box-sizing: border-box;
+}
+a {
+    color: #000;
+    text-decoration: none;
+}
+</style>

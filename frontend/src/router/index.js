@@ -1,30 +1,28 @@
 import { createWebHistory, createRouter } from "vue-router";
 import { useUserStore } from "@store/user";
 
-import { Common, Service, Guest, Buyer, Seller } from "./routes";
+import { Main, Store, Product } from "./routes";
 
 const router = createRouter({
     history: createWebHistory(),
-    routes: [...Common, ...Service, ...Guest, ...Buyer, ...Seller],
+    routes: [...Main, ...Store, ...Product],
 });
 
-// router.beforeEach((to, from, next) => {
-//     const user = useUserStore();
+router.beforeEach((to, from, next) => {
+    const { permission } = to.meta;
 
-//     const fromName = from.name; // 전 페이지
-//     const noPer = to.meta.noPer;
-//     let path = "/";
+    if (permission === true) {
+        next();
+    } else {
+        const user = useUserStore();
 
-//     if (fromName != undefined) {
-//         if (!noPer.includes(user.getUser)) {
-//             path = null;
-//         } else {
-//             alert("접근 권환이 없습니다.");
-//         }
-//     } else {
-//         path = null;
-//     }
-//     next(path);
-// });
+        if (permission.includes(user._type)) {
+            next();
+        } else {
+            alert("접근 권한이 없습니다.");
+            next("/");
+        }
+    }
+});
 
 export default router;
