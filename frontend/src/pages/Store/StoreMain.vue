@@ -2,7 +2,7 @@
     <h1>스토어</h1>
     <div v-if="path == `/store`">
         <router-link
-            v-for="(store, index) in store.stores"
+            v-for="(store, index) in stores"
             :key="index"
             :to="`/store/${store}`"
             >{{ store }}</router-link
@@ -14,12 +14,11 @@
 <script>
 import { ref, onMounted, watchEffect } from "vue";
 import { useRouter } from "vue-router";
-
-import useStore from "@store/store";
+import store from "@api/store";
 
 export default {
     setup() {
-        const store = useStore();
+        const stores = ref([]);
         const router = useRouter();
 
         const path = ref();
@@ -29,10 +28,23 @@ export default {
         });
 
         onMounted(() => {
-            store.getStores();
+            store
+                .getStores()
+                .then(async (res) => {
+                    const { status, response, message } = await res.data;
+
+                    if (status) {
+                        stores.value = response;
+                    } else {
+                        alert(message);
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
         });
 
-        return { store, path };
+        return { stores, path };
     },
 };
 </script>

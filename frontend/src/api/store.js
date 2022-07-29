@@ -8,16 +8,10 @@ export default {
             method: "get",
         });
     },
-    productAdd(name, price, count, content) {
+    getProducts(id) {
         return Send({
-            url: "/productAdd",
-            method: "post",
-            data: {
-                name: name,
-                price: price,
-                count: count,
-                content: content,
-            },
+            url: `/getProducts?id=${id}`,
+            method: "get",
         });
     },
 };

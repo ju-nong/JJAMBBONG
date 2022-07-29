@@ -2,14 +2,21 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 import axios from "axios";
 import sign from "@api/sign";
+import service from "@api/service";
 import router from "@router";
 
 export const useUserStore = defineStore("user", () => {
-    const _type = ref("guest");
-    const _id = ref();
-    const _password = ref();
-    const _name = ref();
+    const _type = ref("buyer");
+    const _id = ref("user1");
+    const _password = ref("pw1");
+    const _name = ref("구매자1");
     const _cart = ref([]);
+
+    // const _type = ref("guest");
+    // const _id = ref();
+    // const _password = ref();
+    // const _name = ref();
+    // const _cart = ref([]);
 
     const allPrint = () => {
         console.log(`type: ${_type.value}`);
@@ -47,12 +54,7 @@ export const useUserStore = defineStore("user", () => {
     };
 
     const join = (type, id, password, name) => {
-        if (
-            _isNull(type) ||
-            _isNull(id) ||
-            _isNull(password) ||
-            _isNull(name)
-        ) {
+        if (_areNull([type, id, password, name])) {
             return true;
         }
         sign.join(type, id, password, name)
@@ -73,11 +75,29 @@ export const useUserStore = defineStore("user", () => {
 
     const logout = () => {
         alert("로그아웃 되었습니다.");
-        _type.value = null;
+        router.push("/");
+        _type.value = "guest";
         _id.value = null;
         _password.value = null;
         _name.value = null;
         _cart.value = [];
+    };
+
+    const cart = (code, count) => {
+        service
+            .cart(code, count)
+            .then(async (res) => {
+                const { status, response, message } = await res.data;
+
+                if (status) {
+                    return response;
+                } else {
+                    alert(message);
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     };
 
     const _exception = (error) => {
@@ -93,6 +113,16 @@ export const useUserStore = defineStore("user", () => {
     const _isNull = (value) =>
         value == null || value == undefined || value.trim() === "";
 
+    const _areNull = (values) => {
+        for (const value in values) {
+            if (_isNull(values[value])) {
+                console.log(values[value]);
+                return true;
+            }
+        }
+        return false;
+    };
+
     return {
         _type,
         _id,
@@ -103,6 +133,7 @@ export const useUserStore = defineStore("user", () => {
         login,
         join,
         logout,
+        cart,
     };
 });
 

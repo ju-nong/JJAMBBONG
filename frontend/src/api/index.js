@@ -6,8 +6,15 @@ const instance = axios.create({
     baseURL: "http://localhost:4040/",
 });
 
+const headerList = ["/product/add", "/cart"];
+
 instance.interceptors.request.use(
     function (req) {
+        if (headerList.includes(req.url)) {
+            const user = useUserStore();
+
+            req.headers.id = user._id;
+        }
         return req;
     },
     function (error) {

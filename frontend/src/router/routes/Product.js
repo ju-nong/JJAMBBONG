@@ -2,7 +2,7 @@ const meta = { permission: ["seller"] };
 
 export default [
     {
-        path: "/Product",
+        path: "/product",
         name: "Product",
         meta: { permission: false },
         component: () => import(`@pages/View`),
